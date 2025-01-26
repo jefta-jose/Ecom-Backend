@@ -46,7 +46,7 @@ const handler = async (req, res) => {
         token,
       });
 
-      const verificationLink = `${req.headers.origin}/api/verify-email?token=${token}`;
+      const verificationLink = `https://ecom-backend-ten-rose.vercel.app/api/verify-email?token=${token}`;
 
       const mailOptions = {
         from: process.env.EMAIL_USER,
