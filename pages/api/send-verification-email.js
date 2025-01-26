@@ -11,7 +11,17 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Helper function to set CORS headers
+const setCorsHeaders = (res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://ecom-frontend-9tqg.vercel.app'); // Frontend origin
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS'); // Allowed methods
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allowed headers
+};
+
+
 export default async function handler(req, res) {
+  setCorsHeaders(res)
+  
   if (req.method === 'POST') {
     const { email } = req.body;
 
