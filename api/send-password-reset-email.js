@@ -3,6 +3,21 @@ import crypto from 'crypto';
 import { db } from '../firebase.js'; // Adjust path as necessary
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
 
+const allowCors = fn => async (req, res) => {
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  return await fn(req, res);
+};
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -11,7 +26,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export default async function handler(req, res) {
+const handler = async(req, res) => {
   if (req.method === 'POST') {
     const { email } = req.body;
 
@@ -47,3 +62,5 @@ export default async function handler(req, res) {
     res.status(405).json({ message: 'Method Not Allowed' });
   }
 }
+
+export default allowCors(handler);
