@@ -1,6 +1,6 @@
 import { db } from '../firebase.js';
-import { getAuth } from 'firebase/auth';
-import { collection, query, where, getDocs, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, deleteDoc } from 'firebase/firestore';
+import {auth} from '../firebase.js'
 
 const allowCors = fn => async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -44,7 +44,6 @@ const handler = async (req, res) => {
       await deleteDoc(doc(db, 'verificationTokens', tokenDoc.id));
 
       // Verify the user's token with Firebase Authentication (check if it's valid)
-      const auth = getAuth();
       const user = await auth.getUserByEmail(email);
 
       if (user) {
