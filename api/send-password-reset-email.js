@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
-import { db } from '../../firebase'; // Adjust path as necessary
+import { db } from '../firebase.js'; // Adjust path as necessary
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
 
 const transporter = nodemailer.createTransport({
