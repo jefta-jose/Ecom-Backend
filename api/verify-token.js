@@ -33,17 +33,6 @@ const handler = async (req, res) => {
       return res.status(400).json({ message: 'Invalid or expired token.' });
     }
 
-    const tokenDoc = snapshot.docs[0];
-    const email = tokenDoc.data().email;
-
-    // Remove token from Firestore after it's used
-    await deleteDoc(doc(db, 'verificationTokens', tokenDoc.id));
-
-    // Optionally, you can update the user's verification status in your user collection
-    // For example:
-    // const userDocRef = doc(db, 'users', email);
-    // await updateDoc(userDocRef, { isVerified: true });
-
     res.status(200).json({ message: 'Token verified!' });
   } else {
     res.status(405).json({ message: 'Method Not Allowed' });
