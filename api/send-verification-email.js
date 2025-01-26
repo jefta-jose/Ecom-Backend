@@ -46,14 +46,13 @@ const handler = async (req, res) => {
         token,
       });
 
-      const verificationLink = `https://ecom-backend-ten-rose.vercel.app/api/verify-email?token=${token}`;
-
       const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
         subject: "Verify Your Email",
-        html: `<p>Click <a href="${verificationLink}">here</a> to verify your email.</p>`,
+        html: `<p>Click <a href="https://ecom-backend-ten-rose.vercel.app/api/verify-email?token=${token}">here</a> to verify your email.</p>`,
       };
+      
 
       await transporter.sendMail(mailOptions);
 
