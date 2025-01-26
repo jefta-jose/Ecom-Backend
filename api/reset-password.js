@@ -3,6 +3,8 @@ import { getAuth } from 'firebase/auth';
 import { collection, query, where, getDocs, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 
 export default async function handler(req, res) {
+  console.log("Request method:", req.method);  // Log request method
+
   if (req.method === 'POST') {
     const { token, newPassword } = req.body;
 
