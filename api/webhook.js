@@ -1,55 +1,53 @@
-import Stripe from "stripe";
+import { buffer } from 'micro';
+import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-06-20",
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export const config = {
   api: {
-    bodyParser: false, // Stripe requires raw body
+    bodyParser: false, // Vercel functions do not parse the body automatically
   },
 };
 
-const handler = async (req, res) => {
-  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET; // From Stripe Dashboard
-  const sig = req.headers["stripe-signature"];
+const webhookHandler = async (req, res) => {
+  if (req.method === 'POST') {
+    const sig = req.headers['stripe-signature'];
+    const reqBuffer = await buffer(req); // Capture the raw body for verification
 
-  let event;
+    try {
+      const event = stripe.webhooks.constructEvent(
+        reqBuffer.toString(),
+        sig,
+        endpointSecret
+      );
 
-  try {
-    // Verify the event came from Stripe
-    const rawBody = await buffer(req);
-    event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
+      // Handle the event
+      switch (event.type) {
+        case 'checkout.session.completed':
+          const session = event.data.object;
+          // Handle the checkout session
+          console.log(`Payment successful for session: ${session.id}`);
+          break;
+        case 'payment_intent.succeeded':
+          const paymentIntent = event.data.object;
+          console.log(`PaymentIntent was successful: ${paymentIntent.id}`);
+          break;
+        // Add other events as needed
+        default:
+          console.log(`Unhandled event type: ${event.type}`);
+      }
 
-    // Handle the event
-    switch (event.type) {
-      case "checkout.session.completed":
-        console.log("Checkout session completed", event.data.object);
-        // Fulfill the order, update DB, send email, etc.
-        break;
-      case "payment_intent.succeeded":
-        console.log("Payment intent succeeded", event.data.object);
-        break;
-      case "payment_intent.payment_failed":
-        console.log("Payment failed", event.data.object);
-        break;
-      default:
-        console.log(`Unhandled event type ${event.type}`);
+      res.status(200).send('Event received');
+    } catch (err) {
+      console.log('Error verifying webhook: ', err.message);
+      res.status(400).send(`Webhook error: ${err.message}`);
     }
-
-    res.status(200).send("Event received");
-  } catch (err) {
-    console.error("Webhook Error:", err.message);
-    res.status(400).send(`Webhook Error: ${err.message}`);
+  } else {
+    res.setHeader('Allow', 'POST');
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 };
 
-async function buffer(req) {
-  const chunks = [];
-  for await (const chunk of req) {
-    chunks.push(chunk);
-  }
-  return Buffer.concat(chunks);
-}
-
-export default handler;
+export default webhookHandler;
