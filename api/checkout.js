@@ -17,7 +17,6 @@ const allowCors = fn => async (req, res) => {
 
 //api to checkout 
 const handler = async(req, res) => {
-
     try {
       const { items, email } = req.body;
   
