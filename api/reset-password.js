@@ -1,8 +1,7 @@
 import { db } from '../firebase.js';
 import { collection, query, where, getDocs, doc, deleteDoc } from 'firebase/firestore';
-import {auth} from '../firebase.js'
+import { auth } from '../firebase.js';  // Import the admin.auth instance
 const admin = require('firebase-admin');
-
 
 const serviceAccount = {
   "type": process.env.SERVICE_ACCOUNT_TYPE,
@@ -18,9 +17,8 @@ const serviceAccount = {
   "universe_domain": process.env.UNIVERSE_DOMAIN,
 };
 
-
 admin.initializeApp({
-credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert(serviceAccount),
 });
 
 const allowCors = fn => async (req, res) => {
@@ -65,11 +63,11 @@ const handler = async (req, res) => {
       await deleteDoc(doc(db, 'verificationTokens', tokenDoc.id));
 
       // Verify the user's token with Firebase Authentication (check if it's valid)
-      const user = await admin.auth.getUserByEmail(email);
+      const user = await admin.auth().getUserByEmail(email);  // Use admin.auth() here
 
       if (user) {
         console.log(`Found user: ${email}`);
-            
+
         // Update the password using Firebase Authentication
         await admin.auth().updateUser(user.uid, { password: newPassword });
 
