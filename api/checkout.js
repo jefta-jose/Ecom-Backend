@@ -1,3 +1,5 @@
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
 const allowCors = fn => async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
