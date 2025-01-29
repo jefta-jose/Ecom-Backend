@@ -91,7 +91,6 @@ const consumer_key = process.env.MPESA_CONSUMER_KEY;
 const consumer_secret = process.env.MPESA_SECRET_KEY;
 
 async function getAccessToken() {
-  const url = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials";
 
   const auth =
     "Basic " +
@@ -100,7 +99,8 @@ async function getAccessToken() {
 
 
   try {
-    const response = await axios.get(url, {
+    const response = await fetch(`https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials`, {
+      method: "POST",
       headers: { Authorization: auth },
     });
     console.log("Access Token:", response.data.access_token);
