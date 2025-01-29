@@ -16,8 +16,7 @@ export default async function handler(req, res) {
     let redirectUrl = "https://ecom-frontend-seven-chi.vercel.app/cancel"; // Default to failure
 
     if (ResultCode === 0) {
-      // const amount = CallbackMetadata.Item.find(item => item.Name === "Amount")?.Value;
-      const amount = 1;
+      const amount = CallbackMetadata.Item.find(item => item.Name === "Amount")?.Value;
       const mpesaReceiptNumber = CallbackMetadata.Item.find(item => item.Name === "MpesaReceiptNumber")?.Value;
       const transactionDate = CallbackMetadata.Item.find(item => item.Name === "TransactionDate")?.Value;
       const phoneNumber = CallbackMetadata.Item.find(item => item.Name === "PhoneNumber")?.Value;
