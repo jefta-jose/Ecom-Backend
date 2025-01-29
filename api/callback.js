@@ -29,7 +29,7 @@ export default async function handler(req, res) {
 
       // Save to Firestore
       try {
-        const orderRef = doc(db, "mpesaOrders", String(phoneNumber));
+        const orderRef = doc(db, "mpesaOrders", `${mpesaReceiptNumber}_${Date.now()}`); // Unique ID
         await setDoc(orderRef, {
           phoneNumber,
           mpesaReceiptNumber,
@@ -37,7 +37,8 @@ export default async function handler(req, res) {
           transactionDate,
           checkoutRequestID: CheckoutRequestID,
           merchantRequestID: MerchantRequestID,
-        }, { merge: true });
+          createdAt: new Date(),
+        });
 
         console.log("Payment saved to Firestore ✅");
 
