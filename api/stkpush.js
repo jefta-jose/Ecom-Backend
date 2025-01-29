@@ -1,5 +1,5 @@
-import moment from 'moment';
-import axios from "axios";
+const moment = require("moment");
+const axios = require("axios");
 
 const allowCors = fn => async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
