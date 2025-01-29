@@ -100,7 +100,7 @@ async function getAccessToken() {
 
   try {
     const response = await fetch(`https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials`, {
-      method: "POST",
+      method: "GET",
       headers: { Authorization: auth },
     });
     console.log("Access Token:", response.data.access_token);
