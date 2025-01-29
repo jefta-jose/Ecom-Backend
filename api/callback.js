@@ -29,7 +29,7 @@ export default async function handler(req, res) {
 
       // Save to Firestore
       try {
-        const orderRef = doc(db, "mpesaOrders", `${mpesaReceiptNumber}_${Date.now()}`); // Unique ID
+        const orderRef = doc(db, "mpesaOrders", `${mpesaReceiptNumber}`); // Unique ID
         await setDoc(orderRef, {
           phoneNumber,
           mpesaReceiptNumber,
