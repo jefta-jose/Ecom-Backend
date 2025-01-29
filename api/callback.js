@@ -29,7 +29,7 @@ export default async function handler(req, res) {
 
       // Save to Firestore
       try {
-        const orderRef = doc(db, "mpesaOrders", phoneNumber);
+        const orderRef = doc(db, "mpesaOrders", String(phoneNumber));
         await setDoc(orderRef, {
           phoneNumber,
           mpesaReceiptNumber,
