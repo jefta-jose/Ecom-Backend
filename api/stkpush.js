@@ -1,4 +1,3 @@
-import axios from "axios";
 import moment from "moment";
 
 const consumer_key = process.env.MPESA_CONSUMER_KEY; // Environment variable
@@ -49,38 +48,37 @@ const handler = async (req, res) => {
 
   try {
     const accessToken = await getAccessToken();
-    const url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
     const timestamp = moment().format("YYYYMMDDHHmmss");
     const password = Buffer.from(
       process.env.MPESA_SHORTCODE + process.env.MPESA_PASSKEY + timestamp
     ).toString("base64");
 
-    const response = await axios.post(
-      url,
-      {
+    const response = await fetch("https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
         BusinessShortCode: "174379",
         Password: password,
         Timestamp: timestamp,
         TransactionType: "CustomerPayBillOnline",
-        Amount: totalAmount, // Updated to send total amount
+        Amount: totalAmount,
         PartyA: phoneNumber,
         PartyB: "174379",
         PhoneNumber: phoneNumber,
         CallBackURL: "https://ecom-backend-ten-rose.vercel.app/api/callback",
         AccountReference: "accountNumber",
         TransactionDesc: "Mpesa Daraja API stk push test",
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
+      }),
+    });
 
     res.status(200).json({
       msg: "Request successful! Please enter your Mpesa PIN.",
       status: true,
     });
+
   } catch (error) {
     console.error("STK Push Error:", error.response ? error.response.data : error.message);
     
@@ -102,7 +100,8 @@ const getAccessToken = async () => {
 
 
   try {
-    const response = await axios.get(url, {
+    const response = await fetch(url, {
+      method: "GET",
       headers: { Authorization: auth },
     });
     console.log("Access Token:", response.data.access_token);
