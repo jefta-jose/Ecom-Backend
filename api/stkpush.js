@@ -1,7 +1,5 @@
 import moment from 'moment';
-
-const consumer_key = process.env.MPESA_CONSUMER_KEY; // Environment variable
-const consumer_secret = process.env.MPESA_SECRET_KEY; // Environment variable
+import axios from 'axios'
 
 const allowCors = fn => async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -16,6 +14,30 @@ const allowCors = fn => async (req, res) => {
     return;
   }
   return await fn(req, res);
+};
+
+const consumer_key = process.env.MPESA_CONSUMER_KEY; // Environment variable
+const consumer_secret = process.env.MPESA_SECRET_KEY; // Environment variable
+
+async function getAccessToken() {
+  const url = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials";
+
+  const auth =
+    "Basic " +
+        Buffer.from(consumer_key + ":" + consumer_secret).toString("base64");
+            console.log("Authorization Header:", auth);
+
+
+  try {
+    const response = await axios.get(url, {
+      headers: { Authorization: auth },
+    });
+    console.log("Access Token:", response.data.access_token);
+    return response.data.access_token;
+  } catch (error) {
+    console.error("Error fetching access token:", error.message);
+    throw new Error("Failed to fetch access token. Check credentials or network.");
+  }
 };
 
 const handler = async (req, res) => {
@@ -91,25 +113,6 @@ const handler = async (req, res) => {
 };
 
 
-async function getAccessToken() {
-    const url = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials";
-  
-    const auth =
-      "Basic " +
-          Buffer.from(consumer_key + ":" + consumer_secret).toString("base64");
-              console.log("Authorization Header:", auth);
-  
-  
-    try {
-      const response = await axios.get(url, {
-        headers: { Authorization: auth },
-      });
-      console.log("Access Token:", response.data.access_token);
-      return response.data.access_token;
-    } catch (error) {
-      console.error("Error fetching access token:", error.message);
-      throw new Error("Failed to fetch access token. Check credentials or network.");
-    }
-  };
+
 
 export default allowCors(handler);
