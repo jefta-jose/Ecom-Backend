@@ -1,8 +1,5 @@
 import moment from "moment";
 
-const consumer_key = process.env.MPESA_CONSUMER_KEY; // Environment variable
-const consumer_secret = process.env.MPESA_SECRET_KEY; // Environment variable
-
 const allowCors = fn => async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -90,7 +87,10 @@ const handler = async (req, res) => {
   }
 };
 
-const getAccessToken = async () => {
+const consumer_key = process.env.MPESA_CONSUMER_KEY;
+const consumer_secret = process.env.MPESA_SECRET_KEY;
+
+async function getAccessToken() {
   const url = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials";
 
   const auth =
@@ -100,8 +100,7 @@ const getAccessToken = async () => {
 
 
   try {
-    const response = await fetch(url, {
-      method: "GET",
+    const response = await axios.get(url, {
       headers: { Authorization: auth },
     });
     console.log("Access Token:", response.data.access_token);
