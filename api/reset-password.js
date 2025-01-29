@@ -37,7 +37,6 @@ const allowCors = fn => async (req, res) => {
 };
 
 const handler = async (req, res) => {
-  console.log("Request method:", req.method);  // Log request method
 
   if (req.method === 'POST') {
     const { token, newPassword } = req.body;
@@ -66,8 +65,6 @@ const handler = async (req, res) => {
       const user = await admin.auth().getUserByEmail(email);  // Use admin.auth() here
 
       if (user) {
-        console.log(`Found user: ${email}`);
-
         // Update the password using Firebase Authentication
         await admin.auth().updateUser(user.uid, { password: newPassword });
 

@@ -27,9 +27,6 @@ const handler = async (req, res) => {
     return res.status(400).json({ msg: "Phone number is required", status: false });
   }
 
-  console.log("Items:", items);
-  console.log("Phone Number:", phoneNumber);
-
   // Convert phone number to international format if needed
   if (phoneNumber.startsWith("0")) {
     phoneNumber = "254" + phoneNumber.slice(1);
@@ -40,8 +37,6 @@ const handler = async (req, res) => {
     const price = parseFloat(item.discountedPrice || item.regularPrice || 0);
     return total + price * (item.quantity || 1);
   }, 0);
-
-  console.log("Total Amount:", totalAmount);
 
   try {
     const accessToken = await getAccessToken();
@@ -96,8 +91,6 @@ async function getAccessToken() {
   const auth =
     "Basic " + Buffer.from(consumer_key + ":" + consumer_secret).toString("base64");
 
-  console.log("Authorization Header:", auth);
-
   try {
     const response = await fetch(url, {
       method: "GET", // ✅ Correct method
@@ -109,7 +102,6 @@ async function getAccessToken() {
     }
 
     const data = await response.json(); // ✅ Correctly parse JSON
-    console.log("Access Token Response:", data);
 
     if (!data.access_token) {
       throw new Error("Access token not found in response.");

@@ -42,8 +42,6 @@ const handler = async(req, res) => {
         metadata: { email },
       });
   
-      console.log("STRIPE SESSION", session);
-  
       // Send both the session ID and URL to the frontend
       res.json({
         message: "Checkout session created successfully",

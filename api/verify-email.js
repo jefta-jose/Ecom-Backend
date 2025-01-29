@@ -2,7 +2,6 @@ import { db } from '../firebase.js';
 import { collection, query, where, getDocs, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 
 export default async function handler(req, res) {
-  console.log("adding handler");
   if (req.method === 'GET') {
     const { token } = req.query;
 
