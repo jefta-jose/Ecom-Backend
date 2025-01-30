@@ -18,6 +18,9 @@ export default async function handler(req, res) {
       const transactionDate = CallbackMetadata.Item.find(item => item.Name === "TransactionDate")?.Value;
       const phoneNumber = CallbackMetadata.Item.find(item => item.Name === "PhoneNumber")?.Value;
 
+      // Extract product details from query parameters
+      const productDetails = req.query.productDetails ? JSON.parse(req.query.productDetails) : [];
+
       // Save to Firestore
       try {
         const orderRef = doc(db, "mpesaOrders", phoneNumber);
@@ -33,7 +36,8 @@ export default async function handler(req, res) {
               checkoutRequestID: CheckoutRequestID,
               merchantRequestID: MerchantRequestID,
               createdAt: new Date(),
-                paymentMethod: "Mpesa",
+              paymentMethod: "Mpesa",
+              products: productDetails,
             })
           })
         }else{
@@ -46,7 +50,8 @@ export default async function handler(req, res) {
               checkoutRequestID: CheckoutRequestID,
               merchantRequestID: MerchantRequestID,
               createdAt: new Date(),
-                paymentMethod: "Mpesa",
+              paymentMethod: "Mpesa",
+              products: productDetails,
             }]
           })
         }

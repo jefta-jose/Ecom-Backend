@@ -38,6 +38,13 @@ const handler = async (req, res) => {
     return total + price * (item.quantity || 1);
   }, 0);
 
+  const productDetails = items.map(item => ({
+    images: item.images
+  }));
+
+  const callbackURL = new URL("https://ecom-backend-ten-rose.vercel.app/api/callback");
+  callbackURL.searchParams.append("productDetails", JSON.stringify(productDetails));  // Adding product details as query params
+
   try {
     const accessToken = await getAccessToken();
     const timestamp = moment().format("YYYYMMDDHHmmss");
@@ -61,7 +68,7 @@ const handler = async (req, res) => {
         PartyA: phoneNumber,
         PartyB: "174379",
         PhoneNumber: phoneNumber,
-        CallBackURL: "https://ecom-backend-ten-rose.vercel.app/api/callback",
+        CallBackURL: callbackURL.toString(),
         AccountReference: "accountNumber",
         TransactionDesc: "Mpesa Daraja API stk push test",
       }),
